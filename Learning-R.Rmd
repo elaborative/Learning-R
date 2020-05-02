@@ -1,0 +1,263 @@
+---
+title: "LearningR-RBasics"
+author: "Ryan J. Cooper"
+date: "4/23/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+## Learning the R Language
+Around the end of January 2020, I enrolled in the HarvardX Data Science for Professionals certificate program. So far, I have completed two of the nine courses for this program. The courses consist of several units per course, with each unit having a collection of videos that correspond with chapters in the textbook. The courses are taught by Professor Rafael Irizarry. 
+
+The courses require that you install the R environment and RStudio to work through the course material. R code samples are provided in the textbook, which you will have to understand well to get through the assessments and exercises throughout the course. So far, I have been able to use the template code provided in the textbook within R studio to successfully reproduce the examples in the book, and through trial and error, I have adapted the examples to answer questions presented at the conclusion of each unit.
+
+The assessments at the end of each chapter are fairly challenging – sometimes a single question requires 4 or 5 facts to be correctly inferred from a data set or chart. You usually have more than one chance to get it right, but not always. I have also run into some technical challenges with the R envoronment, R studio, packages, and data sources throughout the process which I will document in greater detail later in this paper. 
+
+## Setup Steps
+All examples will use R. Before you get started, downloading and install R and RStudio on your development machine
+
+https://www.r-project.org/
+
+## My Background & Forst Impressions
+Starting this course, I was already familiar with programming in general, and SQL in particular for data operations. I have been doing full stack development in the dotnet/SQL sphere for about 20 years professionally. My first impression, coming from a web programming background, is that R, dotnet, and SQL features overlap substantially. Syntax is similar to javascript or C#, but more fundamentally built around vectors / lists vs individual variable values. ALthough every language can handle arrays and hashtables in some manner - R implements these constructs very elegantly. This makes sense, as statistcs is all about set theory, and this is what R was built for.  Thre is also connectivity between SQL and R via the ODBC package... allowing you to blend the two and choose cases where R offers advantages, or cases where SQL might be better for a specific analysis task. You can always split analysis between your SQL and web logic layers- but R offers a powerful middle layer to create reproducible, discrete code blocks for logical analysis and take data from teh database to a finished shart without having to run through so many transformations. R is especially suited to charting and visualization of data, random sampling, modeling, and statistical analysis tasks.
+
+As an example - 
+Under a typical setup for a web based ASP.net dashboard you might:
+<li>pull data from SQL using a SQL query or SPROC
+<li>transform it in your vb or C# code to match the format needed for google charts
+<li>pass the data to a javascript function to google charts API 
+<li>send your data to Google 
+<li>get back the chart details
+<li>render it on your web page via javascript
+
+Under an R script, all of these steps can be shortened to:
+<li>pull data from SQL, transform it inside of R, generate the plot graphic or HTML, and return it to the browser 
+ONE STEP - No network traffic!
+
+One of my challenges in this learning endeavor is bridging the gap between my large existing code base in vb.net and javascript, SQL databases, and new projects I may want to build in R. How will I bring over data in a secure and cnontrolled way? I found connecting to my SQL 2014 server to be relatively easy from a local context. But real world deployment of a direct SQL connection will require more investigation. Another approach (vs SQL odbc) would be to use an API middle layer using entity framework for data provisioning to R - but that effectively draws a line between your R and your SQL applications, whereas the odbc package in R allows you to use SQL DML seamlessly with R. Either way - it will take some time to expermient and find a suitable architecture.
+
+## R Basics
+The first course, R Basics, was a broad overview of the R language including all the basic syntax for using R. 
+https://www.r-project.org/about.html
+
+R is one of the go-to languages for data science professionals. It was developed at Bell Labs by John Chambers and colleagues. R is a variant implementation of the S language. The R language resembles javascript or a merger of javascript and SQL. It is a procedural language which integrates data storage, a suite  of operators, tools ofr data analysis, a graphics facility for rendering, and a compreghensive programming language with all key constructs for conditionals, loops, functions, etc.
+
+The R environment is basically just a command prompt (think MS-DOS) , but there is a free IDE called R Studio, which improves on the functionality of the command prompt and lets you save files, run chunks of code, view data trees, debug, compile, and manage your R project.
+In R, the sort of “basic unit” of analysis is a vector or a list of values. A list of values may be of any number of types including numeric, character, or bitwise T/F values. The <- assignment operator is how you assign a value to the variable on the left.
+
+A cector in R is equivalent to a one-dimensional array in javascript or a row in SQL. A vector represents x observations (fields) of the same parameter / column. A basic list of values that can be access through square braces. 
+Data frames are extensions of this concept, enabling assignment of tables of name/value pairs where each entry is a vector of values associated with a named column header
+
+Although the course is called R basics - there is also a focus on the science behind data - like how you should think about data - is the data binary? character? numeric? if numeric - are teh values continuous or discrete? Are caharacters categorical factors or ordinal? All of these core principles drive future decisions when analyzing and manipulating your data, choosing models and determining how to wrangle your data sets.
+
+```{r vectors}
+foodlist <- c("Apple","Broccoli","Carrot","Banana","Orange","Pineapple","Guava","Walnut","Almond","Peanut") #vector of character
+foodcats <- c("Fruit","Veggie","Veggie","Fruit","Fruit","Fruit","Fruit","Legume","Legume","Legume") #vector of factors
+foodprices <- c(2.50,3.19,2.25,.79,2.79,4.79,0.49,5.95,4.95,3.79) #vector of decimal/numeric
+foodoz <- c(16,24,12,16,16,32,1,10,14.5,36) #vector of decimal/numeric
+foodunit <- c("lb","each","each","lb","lb","each","oz","each","each","each") #vector of factors
+foodinpkg <- c(FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE) #vector of boolean
+
+foodpriceperoz <- foodprices / foodoz #arithmetic on vectors produces vectors of same length in same order
+foodsoldbyweight <- !foodinpkg # boolean arithmetic on vectors produces vectors of same length in same order
+
+foodtable <- data.frame(title= foodlist, 
+                        type = foodcats, 
+                        priceamt = foodprices, 
+                        weightoz = foodoz, 
+                        priceperoz = foodpriceperoz, 
+                        unit = foodunit, 
+                        packaged = foodinpkg, 
+                        byweight = foodsoldbyweight)
+
+foodtable
+
+
+
+```
+
+## Including Plots
+
+Once you have some data to work with, plotting is a very simple matter of calling  the plot function and passing in some parameters to describe the x/y values, at a minimum. Although the plot function shown here is the most basic implementation - R at it's purest - in practice, most of the course has used a package called ggplot2 to render plots. This library builds a ton of useful formatting and functionality on top of the plot function.
+
+```{r showplot}
+
+plot(foodtable$title,foodtable$priceamt)
+
+plot(foodtable$type,foodtable$priceperoz)
+
+hist(foodtable$priceamt)
+
+hist(foodtable$priceperoz)
+
+```
+
+## Transforming data
+
+basic if/else logic can be applied across vectors using a helpful shortcut:
+ 
+```{r conditional}
+
+pricelist <- foodtable$priceamt
+over3bucks <- ifelse(pricelist > 3, TRUE, FALSE)
+
+pricelist
+over3bucks
+
+```
+
+## Investigating data
+
+The R Basics course focuses a lot on defining fundamental concepts like discrete data vs continuous, data types, how to construct functions, conditionals, loops, and so forth- Setting up the student with a toolbox of tools to use in the following courses.
+ R offers a lot of the same features as SQL in terms of filtering, grouping data, joining, summarizing, ordering, and other features common to SQL DML language.
+ 
+```{r sort}
+maxrowindex <- which.max(foodtable$priceamt)
+minrowindex <- which.min(foodtable$priceamt)
+
+# The name of the food with the maximum unit price:
+foodtable$title[maxrowindex]
+
+# The type of the food with the minimum unit price:
+foodtable$type[minrowindex]
+
+# ordering the food name vector by price per ounce, in decreasing order
+foodtable$title[order(foodtable$priceamt, decreasing=TRUE)]
+
+```
+
+In SQL it can be cumbersome to say, create a temporary table with column definitions, populate it, query it, alter it, etc… That is all a line of code in R.
+Then at each step – you can add more data, link additional sources via joins, and continue meshing and merging your data sets until you have the final product you need for plotting.
+
+It also makes it so easy – one line of code – to go from a table of data, to a chart graphic. 
+
+One more line – and the graphic is saved as a JPG/PNG etc.
+
+## Visualization
+
+This is an amazing course! The GGPlot2 package and DPLYR are magnificent add-ons to the R environment. I would almost consider these two packages to be “essential” to programming R – first of all – the language is way more streamlined by using DPLYR – you can “pipe” data through a series of %>% operators and assign the final data to a variable in one line. This would otherwise look like some very ugly, nested function calls in many other languages. In R – it’s all very elegant and clean.
+
+```{r ggplot}
+library(ggplot2)
+library(dplyr)
+foodtable %>% ggplot(aes(x=priceamt,y=weightoz)) + geom_point()
+
+```
+
+
+In addition – the GGPLot2 package opens up a huge world of additional plotting styles to the very basic plots rendered by the R standard language. I can’t imagine why anyone would not use these two packages on virtually any R application. I suspect there is some performance issues with certain plot types etc. – but overall, the packages seem to perform very well and generate extremely complex plots very quickly. For example - a plot of polygons of every county in the US is the slowest thing I have found to plot– it still renders in 1-2 seconds.
+
+## Probability
+
+OK- things are starting to heat up now. The probability course covered a LOT of ground in mathematics. I feel like I have just downloaded a tone of new knowledge. I was not an expert in probability before. We studied the CLT, distributions, how to identify different types of distributions using histograms and QQ plots… and many other useful tools to extend your Exploratory Data Analysis. Provides a firm understanding of mean $\mu$ and standard deviation $\sigma$ calculations.
+
+We covered the central limit theorem, bayes theorem, and general principles of distributions.
+
+## Getting Distracted 
+
+After completing these first 3 courses, I have begun to slow down on my progress. Not because I have lost interest – on the contrary - I am so eager to start using the visualizations that I have been instead spending time learning how to actually create a real-world use case for R Studio in my professional environment.
+
+I came up with a couple interesting approaches.
+
+For creating fairly static non-interactive plots - 
+
+I set up an approach that uses the ODBC package to connect to SQL server, which then gives me the data I need in a data frame I can pass to GGPlot2, which can be generated as a plotly interactive chart (adds hover effects, pan zoom, etc.), and exported via HTMLWidget to a self-contained HTML page and uploaded back to the web server. The output plot can be served securely via an aspx page or framed approach. 
+
+It’s a little clunky but it works. What it lacks is any interactivity. This is, I think, a real game killer. Static charts just aren’t that cool… even with flyouts and hover effects. Not entirely satisfied with this approach. I also have delved into two government supplied API-based data sets – one with demographics data  from form the US Census Bureau, and one with weather data from NOAA.
+
+I have also experimented with the R product “Shiny” which is an integrated server environment for R. You can run your R shiny app on a server like https://ryancooper.shinyapps.io/Corona/
+
+## Inference
+
+This course focuses a lot on polling subjects. 
+We learned about sample distributions, calculating spread and determining the standard error and confidence intervals from equations using $\overline{x}$ and $\sigma$.
+
+We looked at polling data and used a lot of dplyr to filter group and summarize data tofilter out the noise and try to account for bias in the poll data.
+
+Some of the stuff gets pretty complex like using t-distributions instead of confidence intervals.
+
+
+I will write more on this course later.
+
+```{r polls}
+# Load the libraries and data you need for the following exercises
+library(dslabs)
+library(dplyr)
+library(ggplot2)
+data("polls_us_election_2016")
+
+# These lines of code filter for the polls we want and calculate the spreads
+polls <- polls_us_election_2016 %>% 
+  filter(pollster %in% c("Rasmussen Reports/Pulse Opinion Research","The Times-Picayune/Lucid") &
+           enddate >= "2016-10-15" &
+           state == "U.S.") %>% 
+  mutate(spread = rawpoll_clinton/100 - rawpoll_trump/100) 
+
+# Make a boxplot with points of the spread for each pollster
+polls %>% ggplot(aes(pollster,spread)) + geom_boxplot() + geom_point()
+```
+
+
+```{r spread}
+# The `polls` object has already been loaded. Examine it using the `head` function.
+#head(polls)
+
+# Add variable called `error` to the object `polls` that contains the difference between d_hat and the actual difference on election day. Then make a plot of the error stratified by pollster.
+#polls %>% mutate(error = d_hat - 0.021) %>% ggplot(aes(x = pollster, y = error)) + geom_point() + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+```
+## Productivity
+
+Completed in a couple days.
+
+## Linear Regression
+
+This class was fairly difficult.We learned all about calcuolating correlation and plotting regression lines on a scatter plot. The course relly dissects the topic of regression, starting by giving you a fundamental understanding of how $\rho$ is calculated
+
+
+
+## Data Wrangling
+
+Not started yet.
+
+## Machine Learning
+
+Not started yet.
+
+## Capstone
+
+Not started yet.
+
+## Challenges / R Troubleshooting
+
+Installing packages – be sure you have called install.package() for any new libraries
+
+Environment Freezing – had to delete and reinstall once
+
+Often had to restart R, clear workspace, terminate session, reload libraries, etc.
+
+In EDX – the assessments require EXACT answers, can’t be off by any amount or round less than 3 SIGNIFICANT DIGITS
+
+Be sure you include the set seed statement when you run any simulations – this must be executed as you run distribution simulations like dnorm or you will get different results each time and they won’t match the expected right answer in edx.
+
+Several questions require multiple checkboxes to be checked. Even if one of the checkboxes are correct, the question is considered incorrect until all checkboxes are correct.
+
+I was getting the error could not find function "%>%" and determined it was because RStudio had restarted and was not loading tidyverse before the package forced the reload of the session.
+
+Changing the size of the plot window while you are running a script can crash the session.
+RStudio sometimes freezes when you Run App a shiny App.
+
+You may get massages saying “Warning in install.packages : cannot remove prior installation of package ‘…” – in this case – restart the R Session and try again.
+
+Use the Tools > Check fpr Updates to Packages tool if you have compat. Issues.
+
+The debugger is pretty cryptic. You can see the call stack in the debug window, but it’s not usually really clear what the offending code is. The errors often seem unrelated to the code.
+
+I noticed that sometimes changing the :theme” can cause unexpected results with the x/y axis. E.g.under a theme_bw a plot works, then under no theme or a different theme, it breaks. 
+
+Seems to be related to the units of the axes… probably an issue with converting variables between continuous vs discrete, integer vs date etc.
