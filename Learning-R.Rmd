@@ -23,7 +23,7 @@ All examples will use R. Before you get started, downloading and install R and R
 
 https://www.r-project.org/
 
-## My Background & Forst Impressions
+## My Background & First Impressions
 Starting this course, I was already familiar with programming in general, and SQL in particular for data operations. I have been doing full stack development in the dotnet/SQL sphere for about 20 years professionally. My first impression, coming from a web programming background, is that R, dotnet, and SQL features overlap substantially. Syntax is similar to javascript or C#, but more fundamentally built around vectors / lists vs individual variable values. ALthough every language can handle arrays and hashtables in some manner - R implements these constructs very elegantly. This makes sense, as statistcs is all about set theory, and this is what R was built for.  Thre is also connectivity between SQL and R via the ODBC package... allowing you to blend the two and choose cases where R offers advantages, or cases where SQL might be better for a specific analysis task. You can always split analysis between your SQL and web logic layers- but R offers a powerful middle layer to create reproducible, discrete code blocks for logical analysis and take data from teh database to a finished shart without having to run through so many transformations. R is especially suited to charting and visualization of data, random sampling, modeling, and statistical analysis tasks.
 
 As an example - 
