@@ -9,22 +9,30 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
-
 ## Learning the R Language
-Around the end of January 2020, I enrolled in the HarvardX Data Science for Professionals certificate program. So far, I have completed two of the nine courses for this program. The courses consist of several units per course, with each unit having a collection of videos that correspond with chapters in the textbook. The courses are taught by Professor Rafael Irizarry. 
+Around the end of January 2020, I enrolled in the HarvardX Data Science for Professionals certificate program. So far, I have completed six of the nine courses for this program. The courses consist of several units per course, with each unit having a collection of videos that correspond with chapters in the textbook. The courses are taught by Professor Rafael Irizarry. 
 
 The courses require that you install the R environment and RStudio to work through the course material. R code samples are provided in the textbook, which you will have to understand well to get through the assessments and exercises throughout the course. So far, I have been able to use the template code provided in the textbook within R studio to successfully reproduce the examples in the book, and through trial and error, I have adapted the examples to answer questions presented at the conclusion of each unit.
 
 The assessments at the end of each chapter are fairly challenging – sometimes a single question requires 4 or 5 facts to be correctly inferred from a data set or chart. You usually have more than one chance to get it right, but not always. I have also run into some technical challenges with the R envoronment, R studio, packages, and data sources throughout the process which I will document in greater detail later in this paper. 
 
 ## Setup Steps
-All examples will use R. Before you get started, downloading and install R and RStudio on your development machine
+All examples will use R. Before you get started, download and install R and RStudio on your development machine
 
 https://www.r-project.org/
 
+https://rstudio.com/
+
+If you are interested in the course - it can be found gere:
+
+https://www.edx.org/professional-certificate/harvardx-data-science
+
+The HarvardX honor code prohibits posting any answers to questions, class work, etc - so I will instead construct data that demonstrates the basic concepts we are looking at - without spoiling the course or spilling the beans on all the cool subjects you will get to study!
+
 ## My Background & First Impressions
-Starting this course, I was already familiar with programming in general, and SQL in particular for data operations. I have been doing full stack development in the dotnet/SQL sphere for about 20 years professionally. My first impression, coming from a web programming background, is that R, dotnet, and SQL features overlap substantially. Syntax is similar to javascript or C#, but more fundamentally built around vectors / lists vs individual variable values. ALthough every language can handle arrays and hashtables in some manner - R implements these constructs very elegantly. This makes sense, as statistcs is all about set theory, and this is what R was built for.  Thre is also connectivity between SQL and R via the ODBC package... allowing you to blend the two and choose cases where R offers advantages, or cases where SQL might be better for a specific analysis task. You can always split analysis between your SQL and web logic layers- but R offers a powerful middle layer to create reproducible, discrete code blocks for logical analysis and take data from teh database to a finished shart without having to run through so many transformations. R is especially suited to charting and visualization of data, random sampling, modeling, and statistical analysis tasks.
+Starting this course, I was already familiar with programming in general, and SQL in particular for data operations. I have been doing full stack development in the dotnet/SQL sphere for about 20 years professionally. My first impression, coming from a web programming background, is that R, dotnet, and SQL features overlap substantially. Syntax is similar to javascript or C#, but more fundamentally built around vectors / lists vs individual variable values. ALthough every language can handle arrays and hashtables in some manner - R implements these constructs very elegantly. This makes sense, as statistics is all about set theory, and this is what R was built for.  There is also connectivity between SQL and R via the odbc package... allowing you to blend the two and choose cases where R offers advantages, or cases where SQL might be better for a specific analysis task. 
+
+Even under dotnet - you can always split analysis between your SQL, asp, and html/javascript layers- but R offers a powerful all-in-one language to go from database toi presentation all using the same language, with very simplified technology stack architecture. You can create reproducible, discrete code blocks for logical analysis and take data from the database to a finished chart without having to run through so many transformations. Less hand-offfs between layers means fewer type conversions, encoding headaches, which-quotes-do-I-use-here's etc. etc. R is especially suited to charting and visualization of data, random sampling, modeling, and statistical analysis tasks.
 
 As an example - 
 Under a typical setup for a web based ASP.net dashboard you might:
@@ -35,14 +43,17 @@ Under a typical setup for a web based ASP.net dashboard you might:
 <li>get back the chart details
 <li>render it on your web page via javascript
 
-Under an R script, all of these steps can be shortened to:
-<li>pull data from SQL, transform it inside of R, generate the plot graphic or HTML, and return it to the browser 
+Under an R script, all of these steps above can be shortened to:
+<li>pull data from SQL in R, transform it inside of R, generate the plot graphic or HTML in R, and return it to the browser
 ONE STEP - No network traffic!
 
-One of my challenges in this learning endeavor is bridging the gap between my large existing code base in vb.net and javascript, SQL databases, and new projects I may want to build in R. How will I bring over data in a secure and cnontrolled way? I found connecting to my SQL 2014 server to be relatively easy from a local context. But real world deployment of a direct SQL connection will require more investigation. Another approach (vs SQL odbc) would be to use an API middle layer using entity framework for data provisioning to R - but that effectively draws a line between your R and your SQL applications, whereas the odbc package in R allows you to use SQL DML seamlessly with R. Either way - it will take some time to expermient and find a suitable architecture.
+One of my goals / challenges in this learning endeavor is bridging the gap between my large existing code base in vb.net and javascript, SQL databases, and new projects I may want to build in R. How will I bring over data in a secure and controlled way? How will I call R from dotnet? How will I scale local development to a production environment? 
+
+I found connecting to my SQL 2014 server to be relatively easy from a local context. But real world deployment of a direct SQL connection will require more investigation. Another approach (vs SQL odbc) would be to use an API middle layer using entity framework for data provisioning to R - but that effectively draws a line between your R and your SQL applications, whereas the odbc package in R allows you to use SQL DML seamlessly with R. Either way - it will take some time to expermient and find a suitable architecture.
 
 ## R Basics
 The first course, R Basics, was a broad overview of the R language including all the basic syntax for using R. 
+
 https://www.r-project.org/about.html
 
 R is one of the go-to languages for data science professionals. It was developed at Bell Labs by John Chambers and colleagues. R is a variant implementation of the S language. The R language resembles javascript or a merger of javascript and SQL. It is a procedural language which integrates data storage, a suite  of operators, tools ofr data analysis, a graphics facility for rendering, and a compreghensive programming language with all key constructs for conditionals, loops, functions, etc.
@@ -50,10 +61,9 @@ R is one of the go-to languages for data science professionals. It was developed
 The R environment is basically just a command prompt (think MS-DOS) , but there is a free IDE called R Studio, which improves on the functionality of the command prompt and lets you save files, run chunks of code, view data trees, debug, compile, and manage your R project.
 In R, the sort of “basic unit” of analysis is a vector or a list of values. A list of values may be of any number of types including numeric, character, or bitwise T/F values. The <- assignment operator is how you assign a value to the variable on the left.
 
-A cector in R is equivalent to a one-dimensional array in javascript or a row in SQL. A vector represents x observations (fields) of the same parameter / column. A basic list of values that can be access through square braces. 
-Data frames are extensions of this concept, enabling assignment of tables of name/value pairs where each entry is a vector of values associated with a named column header
+A vector in R is equivalent to a one-dimensional array in javascript or a column in SQL. A vector represents x observations (fields) of the same parameter / column - A basic list of values of the same data type that can be access through square braces. Data frames in R are extension of this concept, enabling assignment of complete X by X tables of name/value pairs where each entry is a vector of values associated with a named column header.
 
-Although the course is called R basics - there is also a focus on the science behind data - like how you should think about data - is the data binary? character? numeric? if numeric - are teh values continuous or discrete? Are caharacters categorical factors or ordinal? All of these core principles drive future decisions when analyzing and manipulating your data, choosing models and determining how to wrangle your data sets.
+Although the course is called R basics - there is also a focus on the science behind data and programming - like how you should think about data - is the data binary? character? numeric? if numeric - are the values continuous or discrete? Are characters categorical factors or ordinals? How do tow pieces of data combine through traditional arithmetic and binary arithmetic? All of these core principles drive future decisions when analyzing and manipulating your data, choosing mathematical models and determining how to best approach wrangling your data sets.
 
 ```{r vectors}
 foodlist <- c("Apple","Broccoli","Carrot","Banana","Orange","Pineapple","Guava","Walnut","Almond","Peanut") #vector of character
@@ -77,8 +87,6 @@ foodtable <- data.frame(title= foodlist,
 
 foodtable
 
-
-
 ```
 
 ## Including Plots
@@ -99,7 +107,7 @@ hist(foodtable$priceperoz)
 
 ## Transforming data
 
-basic if/else logic can be applied across vectors using a helpful shortcut:
+Basic if/else logic can be applied across vectors using a helpful ifelse(test, iftrue, iffalse) shortcut function, similar to javascript shorthand conditional like- test ? true : false 
  
 ```{r conditional}
 
